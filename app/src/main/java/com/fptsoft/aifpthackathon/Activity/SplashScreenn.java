@@ -1,10 +1,12 @@
-package com.fptsoft.aifpthackathon;
+package com.fptsoft.aifpthackathon.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.fptsoft.aifpthackathon.R;
 
 public class SplashScreenn extends AppCompatActivity {
 

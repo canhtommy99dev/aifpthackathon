@@ -1,8 +1,10 @@
-package com.fptsoft.aifpthackathon;
+package com.fptsoft.aifpthackathon.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.fptsoft.aifpthackathon.R;
 
 public class MainActivity extends AppCompatActivity {
 
