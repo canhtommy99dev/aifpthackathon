@@ -23,4 +23,9 @@
     <color name="colorPrimaryDark">#6539ba</color>
     <color name="colorAccent">#FF4081</color>
     <color name="bgBottomNavigation">#fe485a</color>
+
+    <color name="bg_black1">#303030</color>
+    <color name="bg_black2">#1c1c1c</color>
+    <color name="element_black">#494949</color>
+    <color name="element_white">#d3d8e3</color>
 </resources>

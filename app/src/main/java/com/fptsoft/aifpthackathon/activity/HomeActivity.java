@@ -1,5 +1,7 @@
 package com.fptsoft.aifpthackathon.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Menu;
@@ -31,10 +33,20 @@ public class HomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private DrawerLayout drawer;
 
+    public static Context contextOfApplication;
+    public static Context getContextOfApplication(){
+        return contextOfApplication;
+    }
+
+    public final static String URL = "ok";
+    public final static String PORT = "port";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        contextOfApplication = getApplicationContext();
 
         navigationView = findViewById(R.id.nav_view);
         bottomNavigationView = findViewById(R.id.navigation);
@@ -161,5 +173,15 @@ public class HomeActivity extends AppCompatActivity {
                 menuItem.setTitle("");
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }
