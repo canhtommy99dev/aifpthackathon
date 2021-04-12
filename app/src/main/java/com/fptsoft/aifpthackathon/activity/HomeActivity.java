@@ -10,6 +10,7 @@ import com.fptsoft.aifpthackathon.R;
 import com.fptsoft.aifpthackathon.activity.ui.camera.CameraFragment;
 import com.fptsoft.aifpthackathon.activity.ui.gallery.GalleryFragment;
 import com.fptsoft.aifpthackathon.activity.ui.home.HomeFragment;
+import com.fptsoft.aifpthackathon.activity.ui.result.ResultFragment;
 import com.fptsoft.aifpthackathon.activity.ui.slideshow.SlideshowFragment;
 import com.fptsoft.aifpthackathon.activity.ui.upload.UploadFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -71,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
                     case R.id.nav_home:
                         toolbar.setTitle("Home");
                         fragment = new HomeFragment();
+//                        fragment = new ResultFragment();
                         loadFragment(fragment);
 
                         drawer.closeDrawers();
@@ -78,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
                         return true;
                     case R.id.nav_gallery:
                         toolbar.setTitle("Gallery");
-                        fragment = new GalleryFragment();
+                        fragment = new GalleryFragment(HomeActivity.this);
                         loadFragment(fragment);
 
                         drawer.closeDrawers();
@@ -106,7 +109,7 @@ public class HomeActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_upload:
                         toolbar.setTitle("Upload");
-                        fragment = new UploadFragment();
+                        fragment = new UploadFragment(HomeActivity.this);
                         setTitleForMenuItemInNavBottom(R.id.navigation_upload, R.string.title_upload);
                         loadFragment(fragment);
 
@@ -120,7 +123,7 @@ public class HomeActivity extends AppCompatActivity {
                         return true;
                     case R.id.navigation_gallery:
                         toolbar.setTitle("Gallery");
-                        fragment = new GalleryFragment();
+                        fragment = new GalleryFragment(HomeActivity.this);
                         setTitleForMenuItemInNavBottom(R.id.navigation_gallery, R.string.title_gallery);
                         loadFragment(fragment);
 
@@ -144,7 +147,6 @@ public class HomeActivity extends AppCompatActivity {
 
     public void loadFragment(Fragment fragment) {
         // load fragment
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.root_fragment_container, fragment);
         transaction.addToBackStack(null);
@@ -183,5 +185,10 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.ui.result.ResultFragment">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="60dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/imageCheck"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/icons8_photo_video_48">
+
+                    </ImageView>
+
+                    <ProgressBar
+                        android:id="@+id/percentResultProgress"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:minHeight="30dp"
+                        android:layout_below="@+id/imageCheck"
+                        android:layout_height="wrap_content"
+                        android:progressDrawable="@drawable/custom_progress_bar"
+                        android:max="100"
+                        android:progress="80"/>
+
+                </RelativeLayout>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Chuan doan">
+                    </TextView>
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="Ten benh">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/sickName"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="ko">
+                    </TextView>
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="Ty le">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/percentResult"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="80">
+                    </TextView>
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="Ngay">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/dateResult"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="11/04/2021">
+                    </TextView>
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="Bac si">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/doctorName"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="..........">
+                    </TextView>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="20dp">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="SDT">
+                    </TextView>
+                    <TextView
+                        android:id="@+id/phoneDoctor"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="..........">
+                    </TextView>
+                </TableRow>
+
+                <FrameLayout
+                    android:id="@+id/includeFragment"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
+                </FrameLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
+
+</FrameLayout>

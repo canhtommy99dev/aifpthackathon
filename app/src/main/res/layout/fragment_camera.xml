@@ -5,14 +5,77 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.ui.camera.CameraFragment">
-
-    <TextView
-        android:id="@+id/text_upload"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textAlignment="center"
-        android:textSize="20dp"
-        android:text="Upload" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="60dp">
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="76dp"
+            android:layout_marginLeft="76dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="84dp"
+            android:layout_marginRight="84dp"
+            android:src="@drawable/missing_available"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/eTxtNameImg"
+            android:textCursorDrawable="@null"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:layout_marginRight="40dp"
+            android:layout_marginLeft="40dp"
+            android:hint="Name For Image"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img"
+            android:layout_marginTop="47dp"
+            android:height="40dp"
+            android:paddingLeft="10dp"
+            android:text="Ten anh"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/btnOpenCamera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/eTxtNameImg"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="21dp"
+            android:layout_marginRight="40dp"
+            android:background="@color/green_white"
+            android:gravity="center"
+            android:text="Chụp ảnh"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/btnUpload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnOpenCamera"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="43dp"
+            android:layout_marginRight="40dp"
+            android:gravity="center"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:text="Kiểm tra"
+            android:textSize="20dp" />
+    </RelativeLayout>
 
 </FrameLayout>
