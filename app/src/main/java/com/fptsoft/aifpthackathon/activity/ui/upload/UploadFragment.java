@@ -1,11 +1,7 @@
 package com.fptsoft.aifpthackathon.activity.ui.upload;
 
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,35 +11,35 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fptsoft.aifpthackathon.R;
 import com.fptsoft.aifpthackathon.activity.HomeActivity;
-import com.fptsoft.aifpthackathon.activity.ui.home.HomeViewModel;
+import com.fptsoft.aifpthackathon.activity.model.APIConstant;
+import com.fptsoft.aifpthackathon.activity.model.Result;
+import com.fptsoft.aifpthackathon.activity.service.APIService;
+import com.fptsoft.aifpthackathon.activity.service.CheckService;
+import com.fptsoft.aifpthackathon.activity.service.ImageService;
+import com.fptsoft.aifpthackathon.activity.ui.result.ResultFragment;
+import com.fptsoft.aifpthackathon.activity.utils.FileUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -55,8 +51,23 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     private Button btnSelect;
     private Button btnUpload;
     private EditText eTxtNameImg;
+    private ImageView imageSelected;
     private View root;
+    private Bundle bundleImageSelect;
+
     private Context contextOfApplication;
+    private AppCompatActivity appCompatActivity;
+    private ImageService imageService;
+    private APIService apiService;
+
+    public UploadFragment() {
+    }
+    public UploadFragment(AppCompatActivity appCompatActivity) {
+        this.appCompatActivity = appCompatActivity;
+    }
+    public UploadFragment(Bundle bundleImageSelect) {
+        this.bundleImageSelect = bundleImageSelect;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -64,7 +75,11 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         uploadViewModel =
                 new ViewModelProvider(this).get(UploadViewModel.class);
         root = inflater.inflate(R.layout.fragment_upload, container, false);
+
+
         contextOfApplication = HomeActivity.getContextOfApplication();
+        apiService = new APIService();
+        imageService = new ImageService(contextOfApplication, apiService);
 
 //        final TextView textView = root.findViewById(R.id.text_home);
 //        uploadViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -77,9 +92,18 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         eTxtNameImg = root.findViewById(R.id.eTxtNameImg);
         btnSelect = root.findViewById(R.id.btnSelectImage);
         btnUpload = root.findViewById(R.id.btnUpload);
+        imageSelected = root.findViewById(R.id.img);
 
         btnSelect.setOnClickListener(this);
         btnUpload.setOnClickListener(this);
+
+
+        if(getArguments() != null){
+            String nameImageInBundle = getArguments().get("imageSelect").toString();
+            Bitmap bitmapImageSelect = FileUtil.getBitmapFromNameImage(nameImageInBundle);
+
+            updateView(bitmapImageSelect, nameImageInBundle);
+        }
 
         return root;
     }
@@ -97,7 +121,7 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             selectImage(v);
         }
         if (v == btnUpload) {
-            connectServer(v);
+            uploadImage();
         }
     }
 
@@ -109,76 +133,22 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
-    void connectServer(View v){
-        String ipv4Address = HomeActivity.URL;
-        String portNumber = HomeActivity.PORT;
+    void uploadImage(){
+        String nameImage = eTxtNameImg.getText().toString();
+        String nameImageUpload = nameImage.length() > 0 ? nameImage : "DefaultName.jpg";
 
-        String postUrl= "http://"+ipv4Address+":"+portNumber+"/";
-//        String postBodyText="Hello";
-//        MediaType mediaType = MediaType.parse("text/plain; charset=utf-8");
-//        RequestBody postBody = RequestBody.create(mediaType, postBodyText);
-//
-//        postRequest(postUrl, postBody);
+//        try {
+//            Response response = imageService.uploadImage(bitmap, nameImageUpload);
+//            System.out.println("Response upload image " + response.body().string());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        Result result = CheckService.getResult(nameImageUpload);
+        ((HomeActivity) appCompatActivity).loadFragment(new ResultFragment(result));
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        // Read BitMap by file path
-//        Bitmap bitmap = BitmapFactory.decodeFile(selectedImagePath, options);
-        Bitmap bitmapCop = bitmap;
-        bitmapCop.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-
-        RequestBody postBodyImage = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("image", "androidFlask.jpg", RequestBody.create(MediaType.parse("image/*jpg"), byteArray))
-                .build();
-
-        Toast.makeText(contextOfApplication.getApplicationContext(), "Please wait ...", Toast.LENGTH_LONG).show();
-
-        postRequest(postUrl, postBodyImage);
     }
 
-    void postRequest(String postUrl, RequestBody postBody) {
 
-        OkHttpClient client = new OkHttpClient();
-
-        Request request = new Request.Builder()
-                .url(postUrl)
-                .post(postBody)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // Cancel the post on failure.
-                call.cancel();
-
-                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
-                new HomeActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(contextOfApplication.getApplicationContext(), "Failed to Connect to Server", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                // In order to access the TextView inside the UI thread, the code is executed inside runOnUiThread()
-                new HomeActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Toast.makeText(contextOfApplication.getApplicationContext(), response.body().string(), Toast.LENGTH_LONG).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -189,110 +159,30 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
             Uri uri = data.getData();
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(contextOfApplication.getContentResolver(), uri);
+                imageSelected.setImageBitmap(bitmap);
+                String path = uri.getPath();
+                nameImageUpload = path.substring(path.lastIndexOf("/") + 1);
+                eTxtNameImg.setText(nameImageUpload);
+                boolean isSaved = FileUtil.saveBitmapToFile(bitmap, nameImageUpload.substring(0, nameImageUpload.lastIndexOf(".")));
+                if(isSaved){
+                    Toast.makeText(contextOfApplication.getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(contextOfApplication.getApplicationContext(), "Cannot save", Toast.LENGTH_LONG).show();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            String selectedImagePath = getPath(contextOfApplication.getApplicationContext(), uri);
+            String selectedImagePath = ImageService.getPath(contextOfApplication.getApplicationContext(), uri);
             System.out.println("Part select" + selectedImagePath);
             Toast.makeText(contextOfApplication.getApplicationContext(), selectedImagePath, Toast.LENGTH_LONG).show();
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static String getPath(final Context context, final Uri uri) {
-
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
-                }
-
-                // TODO handle non-primary volumes
-            }
-            // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-
-                final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-
-                return getDataColumn(context, contentUri, null, null);
-            }
-            // MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                }
-
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
-                        split[1]
-                };
-
-                return getDataColumn(context, contentUri, selection, selectionArgs);
-            }
-        }
-        // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            return getDataColumn(context, uri, null, null);
-        }
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
+    public void updateView(Bitmap bitmap, String nameImage){
+        this.nameImageUpload = nameImage;
+        this.bitmap = bitmap;
+        this.imageSelected.setImageBitmap(bitmap);
+        this.eTxtNameImg.setText(nameImage);
     }
 
-    public static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
-
-        Cursor cursor = null;
-        final String column = "_data";
-        final String[] projection = {
-                column
-        };
-
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final int column_index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(column_index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return null;
-    }
-
-    public static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
-    }
-
-    public static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
-    }
-
-    public static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
 }
